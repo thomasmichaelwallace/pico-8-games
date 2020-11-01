@@ -30,7 +30,7 @@ you={
 
 
 function set_level()
- local s=lvl.s
+ local s=(lvl.s*1)--todo:balance
  --let level by score
  lvl.v=min(1+s/10,5)
  you.v=min(1+s/10,5)
@@ -83,7 +83,7 @@ function _update_game()
 		 if(a.x>(you.x-8) and a.x<(you.x+8))then
 		 	del(actors,a)
 		 	if(a.f)then
-		 	 --state=2
+		 	 --state=2--todo:allow die
 		 	else
 		 	 lvl.s+=1
 		 	 set_level()
@@ -115,7 +115,7 @@ function _draw_game()
   a:_draw()
  end
  --score
- print(lvl.s)
+ print(lvl.s,7)
 end
 
 function _update()
@@ -156,7 +156,6 @@ function add_actor()
  	end,
  	_update=function(self)
  		self.y+=lvl.v
- 		
  		if(ani.k)self.r+=1
  		if(self.r>3)self.r=0
  		if(self.y>128)del(actors,self)
@@ -173,20 +172,41 @@ tail={5,1,2,13,8,14,9,10,11,12,6,7}
 function add_star()
  local s={
   x=flr(rnd(128)),
-  y=flr(rnd(128)),
-  v=0.5+rnd(0.5),
+  y=flr(rnd(128+72))-36,
+  v=0.5+rnd(0.75),
   d=0,
   _update=function(self)
    self.d=lvl.v*self.v
    self.y+=self.d
-   if(self.y>148)then
+   if(self.y>164)then
     self.x=flr(rnd(128))
-    self.y=0
+    self.y=-36
    end
   end,
   _draw=function(self)
-   for o=0,self.d*4,1 do
-    pset(self.x,self.y+o,tail[o+1])
+   local p=min(flr(lvl.s),3*#tail+1)
+   local t=max(0,p-2*#tail)
+   local d=mid(0,p-#tail,#tail)
+   local l=0
+   local c=0
+   for o=0,p,1 do
+    l+=1
+    if(t>0)then
+     if(l==3)then
+      t-=1
+      c+=1
+      l=0
+     end
+    elseif(d>0)then
+     if(l==2)then
+      d-=1
+      c+=1
+      l=0
+     end
+    else
+     c+=1
+    end
+    pset(self.x,self.y+o,tail[c])
    end
   end,
  }
@@ -195,7 +215,7 @@ end
 
 function _init_stars()
  stars={}
- for i=0,20,1 do
+ for i=0,36,1 do
   add_star()
  end
 end

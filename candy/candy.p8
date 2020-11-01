@@ -6,10 +6,18 @@ __lua__
 
 state=0--0:intro 1:game 2:end
 
+lvl={
+ w=0,--wait until next
+ w_max=30,--max wait until next
+ s=0,--score
+ l=0,--level
+ v=0,--fall-rate
+}
+
 ani={
  t=0,--count
  k=false,--tick
- r=4,--frame rate
+ r=6,--frame rate
  h=false,
 }
 
@@ -20,18 +28,35 @@ you={
 	s=1,--sprite
 }
 
-lvl={
- w=0,--wait until next
- s=0,--score
-}
-
 actors={}
+
+function set_level()
+ --let level by score
+ lvl.l=lvl.s--!
+ if(lvl.l==0)then
+  lvl.v=1
+  you.v=2
+ elseif(lvl.l==1)then
+  lvl.v=2
+  you.v=3
+ elseif(lvl.l==2)then
+  lvl.v=3
+  you.v=4
+ elseif(lvl.l==3)then
+  lvl.v=4
+  you.v=5
+ elseif(lvl.l==4)then
+  lvl.v=5
+  you.v=6
+ end
+end
 
 function _init_game()
  --reset
  actors={}
  you.x=60
- you.v=2
+ lvl.s=0
+ set_level()
  --start
  state=1
 end
@@ -43,7 +68,7 @@ end
 function _draw_screen()
  cls()
  if(state==0)then
-  print("sugarrush")
+  print("sugarush")
  else
   print("gameover")
   print("you scored "..lvl.s)
@@ -74,6 +99,7 @@ function _update_game()
 		 	 state=2
 		 	else
 		 	 lvl.s+=1
+		 	 set_level()
 		 	end
 		 end
 		end
@@ -82,7 +108,7 @@ function _update_game()
  lvl.w-=1
  if(lvl.w<0)then
   add_actor()
-  lvl.w=30
+  lvl.w=flr(rnd(lvl.w_max))
  end
 end
 
@@ -131,7 +157,7 @@ function add_actor()
  	 spr(self.s,self.x,self.y,1,1,fx,fy)
  	end,
  	_update=function(self)
- 		self.y+=1
+ 		self.y+=lvl.v
  		
  		if(ani.k)self.r+=1
  		if(self.r>3)self.r=0

@@ -28,18 +28,18 @@ you={
 	s=1,--sprite
 }
 
-actors={}
 
 function set_level()
  local s=lvl.s
  --let level by score
  lvl.v=min(1+s/10,5)
  you.v=min(1+s/10,5)
- lvl.w_max=max(5,30-s/4)
+ lvl.w_max=max(0,30-s)
 end
 
 function _init_game()
  --reset
+ _init_stars()
  actors={}
  you.x=60
  lvl.s=0
@@ -95,12 +95,19 @@ function _update_game()
  lvl.w-=1
  if(lvl.w<0)then
   add_actor()
-  lvl.w=flr(rnd(lvl.w_max))
+  lvl.w=5+flr(rnd(lvl.w_max))
+ end
+ --stars
+ for s in all(stars) do
+  s:_update()
  end
 end
 
 function _draw_game()
  cls()
+ for s in all(stars) do
+  s:_draw()
+ end
  --player
  spr(you.s,you.x,you.y)
  --actors
@@ -127,6 +134,10 @@ function _draw()
  end
 end
 -->8
+--actors
+
+actors={}
+
 function add_actor()
  local t=flr(rnd(5))+1
  local f=(rnd(1)<0.5)
@@ -153,6 +164,37 @@ function add_actor()
  }
  add(actors,a)
 end
+-->8
+--stars
+
+stars={}
+
+function add_star()
+ local s={
+  x=flr(rnd(128)),
+  y=flr(rnd(128)),
+  v=0.5+rnd(0.5),
+  _update=function(self)
+   self.y+=lvl.v*self.v
+   if(self.y>128)then
+    self.x=flr(rnd(128))
+    self.y=0
+   end
+  end,
+  _draw=function(self)
+   pset(self.x,self.y,5)
+  end,
+ }
+ add(stars,s)
+end
+
+function _init_stars()
+ stars={}
+ for i=0,20,1 do
+  add_star()
+ end
+end
+
 __gfx__
 000000000787878000ffff00000000000333bb30000000000b000000333000000000000000000000000000000000000000000000000000000000000000000000
 0000000008888880087878700400000033b3bb3000fff444bb888800b39990000000000000000000000000000000000000000000000000000000000000000000

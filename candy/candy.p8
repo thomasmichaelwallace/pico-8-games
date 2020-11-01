@@ -31,24 +31,11 @@ you={
 actors={}
 
 function set_level()
+ local s=lvl.s
  --let level by score
- lvl.l=lvl.s--!
- if(lvl.l==0)then
-  lvl.v=1
-  you.v=2
- elseif(lvl.l==1)then
-  lvl.v=2
-  you.v=3
- elseif(lvl.l==2)then
-  lvl.v=3
-  you.v=4
- elseif(lvl.l==3)then
-  lvl.v=4
-  you.v=5
- elseif(lvl.l==4)then
-  lvl.v=5
-  you.v=6
- end
+ lvl.v=min(1+s/10,5)
+ you.v=min(1+s/10,5)
+ lvl.w_max=max(5,30-s/4)
 end
 
 function _init_game()

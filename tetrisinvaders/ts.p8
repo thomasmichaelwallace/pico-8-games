@@ -232,11 +232,8 @@ shapes={
 function add_tss()
  local n=rndi(1,7)
  local s=shapes[n]
- local on=1
- if(n>2)on+=1
- if(n>3)on+=2
- local o=rndi(1,on)
- if(o>1)s=rotatemt(s,o-1)
+ local o=rndi(0,3)
+ s=rotatemt(s,o)
  local ro=rndi(0,16-#s[1])
  local l=pals[n]
  --preserve ref. order

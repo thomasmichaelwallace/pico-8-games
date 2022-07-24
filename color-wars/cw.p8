@@ -201,6 +201,7 @@ function _init_enemies(total)
   if(f==0)then
    r=o
    c=0
+   if(r==5)r+=1
   elseif(f==1)then
    r=o
    c=15
